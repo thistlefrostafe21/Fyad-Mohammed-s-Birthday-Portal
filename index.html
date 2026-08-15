@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FYAD // Birthday Archive</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #050505;
+      color: #f5f5f5;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
+    }
+
+    .container {
+      width: min(900px, 90%);
+      margin: auto;
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .hero-inner {
+      max-width: 800px;
+    }
+
+    .tiny {
+      color: #777;
+      font-size: 12px;
+      letter-spacing: 3px;
+      margin-bottom: 25px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(55px, 12vw, 130px);
+      line-height: 0.9;
+      letter-spacing: -7px;
+      font-weight: 800;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 span {
+      color: #777;
+    }
+
+    .hero p {
+      color: #999;
+      font-size: 16px;
+      max-width: 550px;
+      margin: auto;
+    }
+
+    .scroll {
+      margin-top: 70px;
+      color: #555;
+      font-size: 11px;
+      letter-spacing: 3px;
+    }
+
+    /* SECTIONS */
+
+    section {
+      min-height: 80vh;
+      padding: 120px 0;
+      border-top: 1px solid #1d1d1d;
+    }
+
+    .section-number {
+      color: #777;
+      font-size: 12px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-size: clamp(42px, 7vw, 75px);
+      line-height: 1;
+      letter-spacing: -3px;
+      margin-bottom: 25px;
+    }
+
+    .section-description {
+      color: #777;
+      max-width: 600px;
+      font-size: 15px;
+    }
+
+    /* ARCHIVE */
+
+    .archive {
+      margin-top: 60px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .archive-item {
+      border: 1px solid #242424;
+      padding: 25px;
+      background: rgba(255,255,255,0.015);
+      transition: 0.3s;
+    }
+
+    .archive-item:hover {
+      border-color: #555;
+      transform: translateX(5px);
+    }
+
+    .archive-item .name {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .archive-item .meta {
+      color: #555;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    /* QUOTE */
+
+    .quote {
+      margin-top: 70px;
+      border-left: 2px solid #555;
+      padding-left: 30px;
+    }
+
+    .quote p {
+      font-size: clamp(22px, 4vw, 38px);
+      line-height: 1.3;
+      color: #ddd;
+    }
+
+    .quote small {
+      display: block;
+      margin-top: 25px;
+      color: #555;
+      letter-spacing: 2px;
+    }
+
+    /* FINAL FILE */
+
+    .final-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .final-header {
+      text-align: center;
+    }
+
+    .final-header .section-number {
+      color: #888;
+    }
+
+    .final-header h2 {
+      font-size: clamp(48px, 9vw, 95px);
+      line-height: 1;
+      letter-spacing: -5px;
+      margin-bottom: 25px;
+    }
+
+    .final-header p {
+      color: #777;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .encrypted-file {
+      width: min(650px, 100%);
+      margin: 65px auto 0;
+      border: 1px solid #292929;
+      padding: 45px 30px;
+      text-align: center;
+      background: rgba(255,255,255,0.015);
+    }
+
+    .file-name {
+      font-weight: bold;
+      font-size: 15px;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+    }
+
+    .file-status {
+      color: #666;
+      font-size: 11px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+
+    .decrypt-btn {
+      background: transparent;
+      color: white;
+      border: 1px solid #555;
+      padding: 15px 30px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .decrypt-btn:hover {
+      background: white;
+      color: black;
+      border-color: white;
+    }
+
+    .decrypt-btn:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+
+    /* DECRYPTING */
+
+    .decrypting {
+      display: none;
+      margin-top: 30px;
+      color: #777;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+
+    .decrypting.show {
+      display: block;
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    /* MESSAGE */
+
+    .decrypted-message {
+      display: none;
+      width: min(700px, 100%);
+      margin: 50px auto 0;
+      border: 1px solid #292929;
+      padding: 45px 35px;
+      background: rgba(255,255,255,0.02);
+      animation: reveal 1.2s ease forwards;
+    }
+
+    .decrypted-message.show {
+      display: block;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .access {
+      color: #777;
+      font-size: 11px;
+      letter-spacing: 3px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .message-content {
+      color: #ddd;
+      font-size: 16px;
+    }
+
+    .message-content p {
+      margin-bottom: 22px;
+    }
+
+    .birthday {
+      text-align: center;
+      font-size: 25px;
+      margin-top: 35px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .heart {
+      text-align: center;
+      font-size: 25px;
+      margin-top: 15px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      border-top: 1px solid #1d1d1d;
+      padding: 50px 20px;
+      text-align: center;
+      color: #444;
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+      section {
+        padding: 90px 0;
+      }
+
+      .hero h1 {
+        letter-spacing: -4px;
+      }
+
+      .final-header h2 {
+        letter-spacing: -3px;
+      }
+
+      .encrypted-file {
+        padding: 35px 20px;
+      }
+
+      .decrypted-message {
+        padding: 30px 22px;
+      }
+
+      .message-content {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <!-- HERO -->
+
+  <header class="hero">
+
+    <div class="hero-inner">
+
+      <div class="tiny">
+        CLASSIFIED // PERSONAL ARCHIVE
+      </div>
+
+      <h1>
+        FYAD<span>.</span>
+      </h1>
+
+      <p>
+        A small digital archive containing a few things
+        that probably should have been said out loud.
+      </p>
+
+      <div class="scroll">
+        SCROLL TO ACCESS ARCHIVE ↓
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- SECTION 01 -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          01 // SUBJECT
+        </div>
+
+        <h2>
+          The Birthday Boy.
+        </h2>
+
+        <p class="section-description">
+          Some people are just people.
+          Some people make you want to become a better version of yourself.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SECTION 02 -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          02 // OBSERVATIONS
+        </div>
+
+        <h2>
+          Things worth remembering.
+        </h2>
+
+      </div>
+
+
+      <div class="archive">
+
+        <div class="archive-item">
+
+          <div class="name">
+            CURIOUS_MIND
+          </div>
+
+          <div class="meta">
+            ALWAYS ASKING WHY.
+          </div>
+
+        </div>
+
+
+        <div class="archive-item">
+
+          <div class="name">
+            RESEARCH_MODE
+          </div>
+
+          <div class="meta">
+            FINDING BETTER ANSWERS INSTEAD OF ACCEPTING THE OLD ONES.
+          </div>
+
+        </div>
+
+
+        <div class="archive-item">
+
+          <div class="name">
+            SYSTEM_THINKER
+          </div>
+
+          <div class="meta">
+            WANTS TO CHANGE THE SYSTEM, NOT JUST SURVIVE IT.
+          </div>
+
+        </div>
+
+
+        <div class="archive-item">
+
+          <div class="name">
+            HUMAN_FIRST
+          </div>
+
+          <div class="meta">
+            WANTS RESEARCH TO ACTUALLY REDUCE PEOPLE'S SUFFERING.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SECTION 03 -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          03 // NOTE
+        </div>
+
+        <h2>
+          Why this person matters.
+        </h2>
+
+      </div>
+
+
+      <div class="quote">
+
+        <p>
+          "Maybe the most inspiring thing about someone
+          is not what they have achieved yet,
+          but what they genuinely want to achieve."
+        </p>
+
+        <small>
+          PERSONAL OBSERVATION // FYAD
+        </small>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SECTION 04 -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-header">
+
+        <div class="section-number">
+          04 // FUTURE
+        </div>
+
+        <h2>
+          Somewhere ahead.
+        </h2>
+
+        <p class="section-description">
+          Research. Technology. Google.
+          Maybe a few impossible ideas along the way.
+        </p>
+
+      </div>
+
+      <div class="quote">
+
+        <p>
+          Keep building things that make people's lives a little easier.
+        </p>
+
+        <small>
+          FUTURE FILE // STILL OPEN
+        </small>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FINAL SECTION -->
+
+  <section class="final-section">
+
+    <div class="container">
+
+      <div class="final-header">
+
+        <div class="section-number">
+          05 // FINAL FILE
+        </div>
+
+        <h2>
+          One file remains.
+        </h2>
+
+        <p>
+          The system has detected a message that was not part of
+          the original archive.
+        </p>
+
+      </div>
+
+
+      <div class="encrypted-file">
+
+        <div class="file-name">
+          FYAD_FINAL_MESSAGE.enc
+        </div>
+
+        <div class="file-status">
+          STATUS: ENCRYPTED
+          <br>
+          AUTHOR: UNKNOWN
+        </div>
+
+        <button
+          class="decrypt-btn"
+          id="decryptButton"
+          onclick="decryptMessage()"
+        >
+          DECRYPT MESSAGE
+        </button>
+
+        <div
+          class="decrypting"
+          id="decrypting"
+        >
+          DECRYPTING<span class="blink">...</span>
+        </div>
+
+      </div>
+
+
+      <!-- FINAL MESSAGE -->
+
+      <div
+        class="decrypted-message"
+        id="decryptedMessage"
+      >
+
+        <div class="access">
+          ACCESS GRANTED // FINAL MESSAGE DECRYPTED
+        </div>
+
+
+        <div class="message-content">
+
+          <p>
+            Hello Birthday Boy!! 🎂💗
+          </p>
+
+
+          <p>
+            I don't know how to code, so you know who helped me with this?
+            Yaaaa yaaaa... ChatGPT. 😭
+            Whatever, ChatGPT seems more excited about your birthday than I am.
+            😂
+          </p>
+
+
+          <p>
+            And please don't start explaining again why ChatGPT is so excited
+            about your birthday. 😶
+          </p>
+
+
+          <p>
+            Actually, you are my idol, you know.
+            I admire you so much and love you with all my heart. ❤️
+          </p>
+
+
+          <p>
+            May Allah bless you with all the success, happiness,
+            and everything you wish for. Ameen. 🤍
+          </p>
+
+
+          <div class="birthday">
+            Happy Birthday, Fyad! 🥹🎂✨
+          </div>
+
+
+          <div class="heart">
+            🤍
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <footer>
+
+    END OF ARCHIVE //
+    HAPPY BIRTHDAY FYAD
+
+  </footer>
+
+
+  <script>
+
+    function decryptMessage() {
+
+      const button = document.getElementById("decryptButton");
+      const decrypting = document.getElementById("decrypting");
+      const message = document.getElementById("decryptedMessage");
+
+      button.disabled = true;
+      button.innerText = "DECRYPTING...";
+
+      decrypting.classList.add("show");
+
+      setTimeout(function() {
+
+        decrypting.classList.remove("show");
+
+        button.style.display = "none";
+
+        message.classList.add("show");
+
+        message.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+
+      }, 2200);
+
+    }
+
+  </script>
+
+</body>
+
+</html>
